@@ -2,14 +2,10 @@
 #include <iostream>
 #include <iomanip>
 
-// cub library
-#include <cub/device/device_radix_sort.cuh>
-#include <cub/device/device_scan.cuh>
-
 #include <cuComplex.h>
-#include "../spreadinterp.h"
+#include "../cuspreadinterp.h"
 #include "../memtransfer.h"
-#include "../profile.h"
+#include <profile.h>
 
 using namespace std;
 

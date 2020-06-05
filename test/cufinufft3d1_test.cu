@@ -4,9 +4,8 @@
 #include <helper_cuda.h>
 #include <complex>
 
-#include "../src/spreadinterp.h"
-#include "../src/cufinufft.h"
-#include "../finufft/utils.h"
+#include <cufinufft.h>
+#include "../contrib/utils.h"
 
 using namespace std;
 
@@ -14,11 +13,16 @@ int main(int argc, char* argv[])
 {
 	int N1, N2, N3, M, N;
 	if (argc<4) {
-		fprintf(stderr,"Usage: cufinufft3d1_test [method [N1 N2 N3 [M [tol]]]]\n");
-		fprintf(stderr,"Details --\n");
-		fprintf(stderr,"method 1: nupts driven\n");
-		fprintf(stderr,"method 2: sub-problems\n");
-		fprintf(stderr,"method 4: block gather\n");
+		fprintf(stderr,
+			"Usage: cufinufft3d1_test method N1 N2 N3 [M [tol]]\n"
+			"Arguments:\n"
+			"  method: One of\n"
+			"    1: nupts driven,\n"
+			"    2: sub-problem, or\n"
+			"    4: block gather.\n"
+			"  N1, N2, N3: The size of the 3D array.\n"
+			"  M: The number of non-uniform points (default N1 * N2 * N3).\n"
+			"  tol: NUFFT tolerance (default 1e-6).\n");
 		return 1;
 	}  
 	double w;
@@ -93,7 +97,8 @@ int main(int argc, char* argv[])
 
 	cufinufft_plan dplan;
 	int dim = 3;
-	ier=cufinufft_default_opts(type1, dim, dplan.opts);
+	int type = 1;
+	ier=cufinufft_default_opts(type, dim, dplan.opts);
 	dplan.opts.gpu_method=method;
 	dplan.opts.gpu_binsizex = 16;
 	dplan.opts.gpu_binsizey = 16;
@@ -107,7 +112,7 @@ int main(int argc, char* argv[])
 	nmodes[1] = N2;
 	nmodes[2] = N3;
 	cudaEventRecord(start);
-	ier=cufinufft_makeplan(type1, dim, nmodes, iflag, ntransf, tol, 
+	ier=cufinufft_makeplan(type, dim, nmodes, iflag, ntransf, tol, 
 		ntransfcufftplan, &dplan);
 	if (ier!=0){
 		printf("err: cufinufft_makeplan\n");

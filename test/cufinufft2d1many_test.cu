@@ -4,9 +4,8 @@
 #include <helper_cuda.h>
 #include <complex>
 
-#include "../src/spreadinterp.h"
-#include "../src/cufinufft.h"
-#include "../finufft/utils.h"
+#include <cufinufft.h>
+#include "../contrib/utils.h"
 
 using namespace std;
 
@@ -14,11 +13,18 @@ int main(int argc, char* argv[])
 {
 	int N1, N2, M, N, ntransf, ntransfcufftplan;
 	if (argc<4) {
-		fprintf(stderr,"Usage: cufinufft2d1_test [method [N1 N2 [ntransf [ntransfcufftplan [M [tol]]]]]\n");
-		fprintf(stderr,"Details --\n");
-		fprintf(stderr,"method 1: nupts driven\n");
-		fprintf(stderr,"method 2: sub-problem\n");
-		fprintf(stderr,"method 3: sub-problem with paul's idea\n");
+		fprintf(stderr,
+			"Usage: cufinufft2d1many_test method N1 N2 [ntransf [ntransfcufftplan [M [tol]]]]\n"
+			"Arguments:\n"
+			"  method: One of\n"
+			"    1: nupts driven,\n"
+			"    2: sub-problem, or\n"
+			"    3: sub-problem with Paul's idea.\n"
+			"  N1, N2: The size of the 2D array.\n"
+			"  ntransf: Number of inputs (default 2 ^ 27 / (N1 * N2)).\n"
+			"  ntransfcufftplan: Number of simultaneous transforms (default min(8, ntransf)).\n"
+			"  M: The number of non-uniform points (default N1 * N2).\n"
+			"  tol: NUFFT tolerance (default 1e-6).\n");
 		return 1;
 	}  
 	double w;
@@ -102,7 +108,8 @@ int main(int argc, char* argv[])
 
 	cufinufft_plan dplan;
 	int dim = 2;
-	ier=cufinufft_default_opts(type1, dim, dplan.opts);
+	int type = 1;
+	ier=cufinufft_default_opts(type, dim, dplan.opts);
 	dplan.opts.gpu_method=method;
 
 	int nmodes[3];
@@ -110,7 +117,7 @@ int main(int argc, char* argv[])
 	nmodes[1] = N2;
 	nmodes[2] = 1;
 	cudaEventRecord(start);
-	ier=cufinufft_makeplan(type1, dim, nmodes, iflag, ntransf, tol, 
+	ier=cufinufft_makeplan(type, dim, nmodes, iflag, ntransf, tol, 
 		ntransfcufftplan, &dplan);
 	if (ier!=0){
 		printf("err: cufinufft2d_plan\n");
