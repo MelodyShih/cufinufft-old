@@ -131,11 +131,7 @@ int main(int argc, char* argv[])
 
 	int dim=3;
 	cufinufft_plan dplan;
-<<<<<<< HEAD
-	ier = cufinufft_default_opts(type1, dim, dplan.opts);
-=======
-	ier = cufinufft_default_opts(1, dim, dplan.opts);
->>>>>>> flatiron/master
+	ier = cufinufft_default_opts(1, dim, &dplan.opts);
 	if(ier != 0 ){
 		cout<<"error: cufinufft_default_opts"<<endl;
 		return 0;

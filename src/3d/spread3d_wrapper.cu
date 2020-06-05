@@ -50,7 +50,7 @@ int cufinufft_spread3d(int ms, int mt, int mu, int nf1, int nf2, int nf3,
 	d_plan->nf2 = nf2;
 	d_plan->nf3 = nf3;
 	d_plan->M = M;
-	d_plan->ntransfcufftplan = 1;
+	d_plan->maxbatchsize = 1;
 
 	cudaEventRecord(start);
 	checkCudaErrors(cudaMalloc(&d_plan->kx,M*sizeof(FLT)));
@@ -316,7 +316,6 @@ int cuspread3d_nuptsdriven_prop(int nf1, int nf2, int nf3, int M,
 
 		cudaEventRecord(start);
 		int n=numbins[0]*numbins[1]*numbins[2];
-		size_t temp_storage_bytes = 0;
 		thrust::device_ptr<int> d_ptr(d_binsize);
 		thrust::device_ptr<int> d_result(d_binstartpts);
 		thrust::exclusive_scan(d_ptr, d_ptr + n, d_result);
