@@ -1,4 +1,6 @@
 # cuFINUFFT
+[Update] The main repository has moved to https://github.com/flatironinstitute/cufinufft. Please refer to it for latest development. 
+
 A GPU implementation of 2, 3 dimension type 1, 2 non-uniform FFT based on [FINUFFT][1].
 
 This is a work from Melody Shih's internship at Flatiron Institute, advised by CCM project leader Alex Barnett.
